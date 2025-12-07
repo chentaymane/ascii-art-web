@@ -14,7 +14,10 @@ func main() {
 	http.HandleFunc("/ascii-art", asciiHandler)
 
 	fmt.Println("Server running on http://localhost:8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	err := http.ListenAndServe(":8080", nil)
+	if err != nil {
+		log.Println("Server failed:", err)
+	}
 }
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
@@ -33,7 +36,6 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 	}
 }
-
 
 func Run(input string, banner string) (string, error) {
 	if input == "" {
@@ -81,7 +83,7 @@ func Run(input string, banner string) (string, error) {
 			}
 
 			// Compute ASCII char index in banner file
-			index := int((char - ' ') * 9 + 1)
+			index := int((char-' ')*9 + 1)
 			if index+8 > len(fontLines) {
 				return "", fmt.Errorf("500: corrupted banner file")
 			}
@@ -100,7 +102,6 @@ func Run(input string, banner string) (string, error) {
 
 	return final, nil
 }
-
 
 func asciiHandler(w http.ResponseWriter, r *http.Request) {
 
