@@ -3,87 +3,137 @@ package main
 import (
 	"fmt"
 	"html/template"
+	"log"
 	"net/http"
 	"os"
 	"strings"
 )
 
 func main() {
-
 	http.HandleFunc("/", homeHandler)
 	http.HandleFunc("/ascii-art", asciiHandler)
 
 	fmt.Println("Server running on http://localhost:8080")
-	http.ListenAndServe(":8080", nil)
-
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/" {
+		http.Error(w, "Page not found", http.StatusNotFound)
+		return
+	}
+
 	tmpl, err := template.ParseFiles("templates/index.html")
 	if err != nil {
 		http.Error(w, "Template not found", http.StatusNotFound)
 		return
 	}
 
-	tmpl.Execute(w, nil)
+	if err := tmpl.Execute(w, nil); err != nil {
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+	}
 }
+
+
 func Run(input string, banner string) (string, error) {
-	font_path := "banners/" + banner + ".txt"
-
-	linesInput := strings.Split(input, "\\n")
-	if linesInput[0] == "" && linesInput[1] == "" {
-		linesInput = linesInput[1:] // remove extra element from strings.Split
+	if input == "" {
+		return "", fmt.Errorf("400: empty input")
 	}
 
-	content, err := os.ReadFile(font_path)
+	// Allowed banners
+	allowed := map[string]bool{
+		"standard":   true,
+		"shadow":     true,
+		"thinkertoy": true,
+	}
+	if !allowed[banner] {
+		return "", fmt.Errorf("404: banner not found")
+	}
+
+	fontPath := "banners/" + banner + ".txt"
+
+	// Normalize line breaks
+	input = strings.ReplaceAll(input, "\r\n", "\n")
+	lines := strings.Split(input, "\n")
+
+	content, err := os.ReadFile(fontPath)
 	if err != nil {
-		return "", fmt.Errorf("banner not found")
+		return "", fmt.Errorf("404: banner file missing")
 	}
 
-	text := strings.ReplaceAll(string(content), "\r\n", "\n")
+	fontTxt := strings.ReplaceAll(string(content), "\r\n", "\n")
+	fontLines := strings.Split(fontTxt, "\n")
 
-	fontLines := strings.Split(text, "\n")
 	final := ""
-	for _, line := range linesInput {
+
+	for _, line := range lines {
 		if line == "" {
 			final += "\n"
 			continue
 		}
+
 		runes := []rune(line)
 		chars := make([][]string, len(runes))
 
 		for i, char := range runes {
 			if char < ' ' || char > '~' {
-				return "", fmt.Errorf("invalid character")
+				return "", fmt.Errorf("400: invalid character")
 			}
 
-			index := int(((char - ' ') * 9) + 1)
+			// Compute ASCII char index in banner file
+			index := int((char - ' ') * 9 + 1)
+			if index+8 > len(fontLines) {
+				return "", fmt.Errorf("500: corrupted banner file")
+			}
+
 			chars[i] = fontLines[index : index+8]
 		}
 
-		for height := 0; height < 8; height++ {
-			for i := range chars {
-				final += chars[i][height]
+		// Build ASCII-art lines
+		for h := 0; h < 8; h++ {
+			for _, c := range chars {
+				final += c[h]
 			}
 			final += "\n"
 		}
 	}
+
 	return final, nil
 }
+
 
 func asciiHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		http.Error(w, "Bad request", http.StatusBadRequest)
 		return
 	}
 
 	text := r.FormValue("text")
 	banner := r.FormValue("banner")
 
+	if text == "" || banner == "" {
+		http.Error(w, "Bad request: missing fields", http.StatusBadRequest)
+		return
+	}
+
 	ascii, err := Run(text, banner)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		// Detect exact type of error from Run()
+		msg := err.Error()
+
+		if strings.HasPrefix(msg, "400") {
+			http.Error(w, msg, http.StatusBadRequest)
+			return
+		}
+
+		if strings.HasPrefix(msg, "404") {
+			http.Error(w, msg, http.StatusNotFound)
+			return
+		}
+
+		// Any other error is internal server error
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
 
@@ -95,5 +145,7 @@ func asciiHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmpl.Execute(w, data)
+	if err := tmpl.Execute(w, data); err != nil {
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+	}
 }
