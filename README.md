@@ -27,7 +27,7 @@ Key features include:
 ### Installation
 1. Clone the repository:
    ```bash
-   git clone <repo-url>
+   git clone https://learn.zone01oujda.ma/git/ahaddou/ascii-art-web.git
    cd ascii-art-web
    ```
 2. Ensure the required folders exist:
