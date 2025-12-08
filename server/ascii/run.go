@@ -11,6 +11,8 @@ func Run(input string, banner string) (string, error) {
 		return "", fmt.Errorf("400: empty input")
 	}
 
+	input = strings.ReplaceAll(input, "\r\n", "\n")
+	
 	if len(input) > 2000 {
 		return "", fmt.Errorf("400: invalid size (max 2000 chars)")
 	}
@@ -28,7 +30,6 @@ func Run(input string, banner string) (string, error) {
 	fontPath := "banners/" + banner + ".txt"
 
 	// Normalize line breaks
-	input = strings.ReplaceAll(input, "\r\n", "\n")
 	lines := strings.Split(input, "\n")
 
 	content, err := os.ReadFile(fontPath)
