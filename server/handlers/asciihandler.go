@@ -1,10 +1,10 @@
 package handlers
 
 import (
+	"bytes"
 	"net/http"
 	"strings"
 	"text/template"
-
 	"ascii-art-web/server/ascii"
 )
 
@@ -50,7 +50,13 @@ func AsciiHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := tmpl.Execute(w, data); err != nil {
+	var buf bytes.Buffer
+
+	if err := tmpl.Execute(&buf, data); err != nil {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
 	}
+
+	buf.WriteTo(w)
+
 }
