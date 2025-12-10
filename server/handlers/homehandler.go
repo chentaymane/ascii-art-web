@@ -11,8 +11,8 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if r.Method != http.MethodGet {
-		http.Error(w, "Page not found", http.StatusNotFound)
-		return
+		http.Error(w, "Bad request", http.StatusBadRequest)
+		return 
 	}
 	tmpl, err := template.ParseFiles("templates/index.html")
 	if err != nil {
