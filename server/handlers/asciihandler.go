@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"net/http"
 	"strings"
-	"text/template"
+	"html/template"
 	"ascii-art-web/server/ascii"
 )
 
