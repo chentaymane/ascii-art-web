@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"net/http"
-	"text/template"
+	"html/template"
 )
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
