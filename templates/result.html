@@ -3,60 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <title>ASCII Result</title>
-<style>
-    /* Body avec fond et police monospace */
-    body {
-        background-color: #121212;
-        color: #f0f0f0;
-        font-family: 'Courier New', Courier, monospace;
-        margin: 0;
-        padding: 20px;
-        min-height: 100vh;
-    }
-
-    .container {
-        max-width: 1000px;
-        margin: 0 auto;
-    }
-
-    h1 {
-        color: #ff7f50;
-        font-size: 2.5em;
-        margin-bottom: 20px;
-        text-shadow: 2px 2px #000;
-        text-align: center;
-    }
-
-    pre {
-        background-color: #1e1e1e;
-        padding: 20px;
-        border-radius: 10px;
-        overflow: auto;       /* scroll horizontal et vertical */
-        white-space: pre;     /* conserve tous les espaces et retours à la ligne */
-        font-size: 14px;
-        line-height: 1.1;
-    }
-
-    a {
-        display: inline-block;
-        margin-top: 20px;
-        padding: 12px 25px;
-        background-color: #ff7f50;
-        color: #121212;
-        text-decoration: none;
-        font-weight: bold;
-        border-radius: 10px;
-        transition: 0.3s;
-    }
-
-    a:hover {
-        background-color: #ff9b6a;
-        box-shadow: 0 0 15px #ff9b6a;
-    }
-</style>
 </head>
 <body>
-<div class="container">
+<div>
     <h1>Generated ASCII Art</h1>
 
     <pre >{{.Result}}</pre>
