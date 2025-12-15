@@ -1,26 +1,26 @@
 package handlers
 
 import (
-	"net/http"
 	"html/template"
+	"net/http"
 )
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
-		http.Error(w, "Page not found", http.StatusNotFound)
+		RenderError(w, http.StatusNotFound, "Page not found")
 		return
 	}
 	if r.Method != http.MethodGet {
-		http.Error(w, "Bad request", http.StatusBadRequest)
-		return 
+		RenderError(w, http.StatusBadRequest, "Bad request")
+		return
 	}
 	tmpl, err := template.ParseFiles("templates/index.html")
 	if err != nil {
-		http.Error(w, "Template not found", http.StatusNotFound)
+		RenderError(w, http.StatusNotFound, "Template not found")
 		return
 	}
 
 	if err := tmpl.Execute(w, nil); err != nil {
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		RenderError(w, http.StatusInternalServerError, "Internal server error")
 	}
 }

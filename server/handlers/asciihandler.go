@@ -10,7 +10,7 @@ import (
 
 func AsciiHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "Bad request", http.StatusBadRequest)
+		RenderError(w, http.StatusBadRequest, "Bad request")
 		return
 	}
 
@@ -18,45 +18,45 @@ func AsciiHandler(w http.ResponseWriter, r *http.Request) {
 	banner := r.FormValue("banner")
 
 	if text == "" || banner == "" {
-		http.Error(w, "Bad request: missing fields", http.StatusBadRequest)
+		RenderError(w, http.StatusBadRequest, "Missing fields")
 		return
 	}
 
-	ascii, err := ascii.Run(text, banner)
+	asciiResult, err := ascii.Run(text, banner)
 	if err != nil {
-		// Detect exact type of error from Run()
 		msg := err.Error()
 
 		if strings.HasPrefix(msg, "400") {
-			http.Error(w, msg, http.StatusBadRequest)
+			RenderError(w, http.StatusBadRequest, msg)
 			return
 		}
 
 		if strings.HasPrefix(msg, "404") {
-			http.Error(w, msg, http.StatusNotFound)
+			RenderError(w, http.StatusNotFound, msg)
 			return
 		}
 
-		// Any other error is internal server error
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		RenderError(w, http.StatusInternalServerError, "Internal server error")
 		return
 	}
 
-	data := struct{ Result string }{Result: ascii}
+	data := struct {
+		Result string
+	}{
+		Result: asciiResult,
+	}
 
 	tmpl, err := template.ParseFiles("templates/result.html")
 	if err != nil {
-		http.Error(w, "Template not found", http.StatusNotFound)
+		RenderError(w, http.StatusNotFound, "Template not found")
 		return
 	}
 
 	var buf bytes.Buffer
-
 	if err := tmpl.Execute(&buf, data); err != nil {
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		RenderError(w, http.StatusInternalServerError, "Internal server error")
 		return
 	}
 
 	buf.WriteTo(w)
-
 }
