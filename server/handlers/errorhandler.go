@@ -27,8 +27,6 @@ func RenderError(w http.ResponseWriter, status int, message string) {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
-
-	// Everything is fine → write the page
 	w.WriteHeader(status)
 	buf.WriteTo(w)
 }
