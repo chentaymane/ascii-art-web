@@ -10,7 +10,6 @@ func RenderError(w http.ResponseWriter, status int, message string) {
 
 	tmpl, err := template.ParseFiles("templates/error.html")
 	if err != nil {
-		// fallback if template fails
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}

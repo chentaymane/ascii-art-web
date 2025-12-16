@@ -3,28 +3,45 @@
 <head>
     <title>ASCII Art Generator</title>
     <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
 </head>
 
 <body>
-<div class="center-page">
+<div class="center">
     <div class="container">
-        <h1>ASCII Art Generator</h1>
+        <h1>ASCII Art</h1>
 
-        <form action="/ascii-art" method="POST">
+        <form method="POST" action="/ascii-art">
             <label>Text</label>
-            <textarea name="text" maxlength="2000" placeholder="enter text (max 2000 chars)" required></textarea>
+            <textarea name="text" required></textarea>
 
             <label>Banner</label>
             <div class="radio-group">
-                <label><input type="radio" name="banner" value="standard" checked> Standard</label>
-                <label><input type="radio" name="banner" value="shadow"> Shadow</label>
-                <label><input type="radio" name="banner" value="thinkertoy"> Thinkertoy</label>
+                <label><input type="radio" name="banner" value="standard" checked> standard</label>
+                <label><input type="radio" name="banner" value="shadow"> shadow</label>
+                <label><input type="radio" name="banner" value="thinkertoy"> thinkertoy</label>
             </div>
 
             <button type="submit">Generate</button>
         </form>
     </div>
 </div>
+<div class="github-footer">
+    <a href="https://github.com/chentaymane" target="_blank" title="achent GitHub" class="no-style">
+        <i class="fab fa-github"></i><p>achent</p>
+    </a>
+    <a href="https://github.com/Houssam-Alhyane" target="_blank" title="halhyane GitHub"  class="no-style">
+        <i class="fab fa-github"></i><p>halhyane</p>
+    </a>
+      <a href="https://github.com/mrshD3IM05" target="_blank" title="ahaddou GitHub"  class="no-style">
+        <i class="fab fa-github"></i><p>ahaddou</p>
+    </a>
+</div>
+
+
 </body>
+
+
 
 </html>
