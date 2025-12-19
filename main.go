@@ -17,8 +17,8 @@ func main() {
     ),
 )
 
-	fmt.Println("Server running on http://localhost:8080")
-	err := http.ListenAndServe(":8080", nil)
+	fmt.Println("Server running on http://localhost:4000")
+	err := http.ListenAndServe(":4000", nil)
 	if err != nil {
 		log.Println("Server failed:", err)
 	}
